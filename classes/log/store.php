@@ -29,52 +29,42 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../vendor/autoload.php');
 
-use \tool_log\log\writer as log_writer;
-use \tool_log\log\manager as log_manager;
-use \tool_log\helper\store as helper_store;
-use \tool_log\helper\reader as helper_reader;
-use \tool_log\helper\buffered_writer as helper_writer;
-use \core\event\base as event_base;
+use \core\event;
 
-use \LogExpander\Controller as moodle_controller;
-use \LogExpander\Repository as moodle_repository;
-use \logstore_caliper\local\Translator\Controller as translator_controller;
-use \logstore_caliper\local\RecipeEmitter\Controller as caliper_controller;
-use \logstore_caliper\local\RecipeEmitter\Repository as caliper_repository;
+use \LogExpander;
+use \logstore_caliper\local\Translator;
+use \logstore_caliper\local\RecipeEmitter;
 
-use \moodle_exception as moodle_exception;
 use \IMSGlobal\Caliper;
-use \stdClass as php_obj;
 
 /**
  * This class processes events and enables them to be sent to a logstore.
  *
  */
-class store extends php_obj implements log_writer {
-    use helper_store;
-    use helper_reader;
-    use helper_writer;
+class store extends \stdClass implements \tool_log\log\writer {
+    use \tool_log\helper\store;
+    use \tool_log\helper\buffered_writer;
 
     /**
      * Constructs a new store.
-     * @param log_manager $manager
+     * @param \tool_log\log\manager $manager
      */
-    public function __construct(log_manager $manager) {
+    public function __construct(\tool_log\log\manager $manager) {
         $this->helper_setup($manager);
     }
 
     /**
-     * Should the event be ignored (not logged)? Overrides helper_writer.
-     * @param event_base $event
+     * Should the event be ignored (not logged)? Overrides tool_log\helper\buffered_writer.
+     * @param event\base $event
      * @return bool
      *
      */
-    protected function is_event_ignored(event_base $event) {
+    protected function is_event_ignored(event\base $event) {
         return false;
     }
 
     /**
-     * Insert events in bulk to the database. Overrides helper_writer.
+     * Insert events in bulk to the database. Overrides tool_log\helper\buffered_writer.
      * @param array $evententries raw event data
      *
      */
@@ -93,9 +83,9 @@ class store extends php_obj implements log_writer {
     public function process_events(array $events) {
 
         // Initializes required services.
-        $moodlecontroller = new moodle_controller($this->connect_moodle_repository());
-        $translatorcontroller = new translator_controller();
-        $calipercontroller = new caliper_controller($this->connect_caliper_repository());
+        $moodlecontroller = new LogExpander\Controller($this->connect_moodle_repository());
+        $translatorcontroller = new Translator\Controller();
+        $calipercontroller = new RecipeEmitter\Controller($this->connect_caliper_repository());
 
         // Emits events to other APIs.
         foreach ($events as $event) {
@@ -123,7 +113,7 @@ class store extends php_obj implements log_writer {
         try {
             $this->connect_caliper_repository();
             return true;
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             debugging('Cannot connect to LRS: ' . $e->getMessage(), DEBUG_DEVELOPER);
             return false;
         }
@@ -145,17 +135,17 @@ class store extends php_obj implements log_writer {
 
         $sensor->registerClient('http', new Caliper\Client('default', $options));
 
-        return new caliper_repository($sensor);
+        return new RecipeEmitter\Repository($sensor);
 
     }
 
     /**
      * Creates a connection to the Moodle Log Repository.
-     * @return moodle_repository
+     * @return LogExpander\Repository
      */
     private function connect_moodle_repository() {
         global $DB;
         global $CFG;
-        return new moodle_repository($DB, $CFG);
+        return new LogExpander\Repository($DB, $CFG);
     }
 }
