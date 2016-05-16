@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Process events in queue.
+ * This file contains ...
  *
  * @package    logstore_caliper
  * @copyright  2016 Moodlerooms Inc. http://www.moodlerooms.com
@@ -23,39 +23,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace logstore_caliper\task;
+namespace logstore_caliper\local\Translator\Events;
 
-use tool_log\log\manager;
-use logstore_caliper\log\store;
-
-defined('MOODLE_INTERNAL') || die();
-
-class emit_task extends \core\task\scheduled_task {
-
+class UserLoggedin extends Event {
     /**
-     * Get a descriptive name for this task (shown to admins).
-     *
-     * @return string
+     * Reads data for an event.
+     * @param [String => Mixed] $expandedevent
+     * @return [String => Mixed]
+     * @override Event
      */
-    public function get_name() {
-        return get_string('taskemit', 'logstore_caliper');
-    }
-
-    /**
-     * Do the job.
-     * Throw exceptions on errors (the job will be retried).
-     */
-    public function execute() {
-        global $DB;
-
-        $manager = get_log_manager();
-        $store = new store($manager);
-
-        $events = $DB->get_records('logstore_caliper_log');
-        $store->process_events($events);
-
-        $DB->delete_records_list('logstore_caliper_log', 'id', array_keys($events));
-
-        mtrace("Sent learning records to Event Store.");
+    public function read(array $expandedevent) {
+        return array_merge(parent::read($expandedevent), [
+            'recipe' => 'user_loggedin',
+        ]);
     }
 }

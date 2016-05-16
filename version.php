@@ -18,7 +18,7 @@
  * External Caliper log store plugin
  *
  * @package    logstore_caliper
- * @copyright  2016 MoodleRooms
+ * @copyright  2016 Moodlerooms Inc. http://www.moodlerooms.com
  * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'logstore_caliper';
-$plugin->version = 2016022100;
+$plugin->version = 2016051600;
 $plugin->release = '0.1';
 $plugin->requires = 2014111000;
 $plugin->maturity = MATURITY_BETA;

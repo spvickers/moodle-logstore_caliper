@@ -38,9 +38,9 @@ use \core\event\base as event_base;
 
 use \LogExpander\Controller as moodle_controller;
 use \LogExpander\Repository as moodle_repository;
-use \logstore_caliper\Translator\Controller as translator_controller;
-use \logstore_caliper\RecipeEmitter\Controller as caliper_controller;
-use \logstore_caliper\RecipeEmitter\Repository as caliper_repository;
+use \logstore_caliper\local\Translator\Controller as translator_controller;
+use \logstore_caliper\local\RecipeEmitter\Controller as caliper_controller;
+use \logstore_caliper\local\RecipeEmitter\Repository as caliper_repository;
 
 use \moodle_exception as moodle_exception;
 use \IMSGlobal\Caliper;
@@ -75,17 +75,17 @@ class store extends php_obj implements log_writer {
 
     /**
      * Insert events in bulk to the database. Overrides helper_writer.
-     * @param array $events raw event data
+     * @param array $evententries raw event data
      *
      */
-    protected function insert_event_entries(array $events) {
+    protected function insert_event_entries($evententries) {
         global $DB;
 
-        // If in background mode, just save them in the database
+        // If in background mode, just save them in the database.
         if (get_config('logstore_caliper', 'backgroundmode')) {
-            $DB->insert_records('logstore_caliper_log', $events);
+            $DB->insert_records('logstore_caliper_log', $evententries);
         } else {
-            $this->process_events($events);
+            $this->process_events($evententries);
         }
 
     }
@@ -105,22 +105,14 @@ class store extends php_obj implements log_writer {
                 continue;
             }
 
-            $translatorevent = $translatorcontroller->createEvent($moodleevent);
+            $translatorevent = $translatorcontroller->create_event($moodleevent);
             if (is_null($translatorevent)) {
                 continue;
             }
 
-            $caliperevent = $calipercontroller->createEvent($translatorevent);
+            $caliperevent = $calipercontroller->create_event($translatorevent);
         }
 
-    }
-
-    private function error_log_value($key, $value) {
-        $this->error_log('['.$key.'] '.json_encode($value));
-    }
-
-    private function error_log($message) {
-        error_log($message."\r\n", 3, __DIR__.'/error_log.txt');
     }
 
     /**
@@ -131,7 +123,7 @@ class store extends php_obj implements log_writer {
         try {
             $this->connect_caliper_repository();
             return true;
-        } catch (moodle_exception $ex) {
+        } catch (moodle_exception $e) {
             debugging('Cannot connect to LRS: ' . $e->getMessage(), DEBUG_DEVELOPER);
             return false;
         }
@@ -146,10 +138,10 @@ class store extends php_obj implements log_writer {
 
         $sensor = new Caliper\Sensor($CFG->wwwroot);
 
-        $options = (new Caliper\Options())
-            ->setHost($this->get_config('endpoint', ''))
-            ->setApiKey($this->get_config('apikey', ''))
-            ->setDebug(true);
+        $options = new Caliper\Options();
+        $options->setHost($this->get_config('endpoint', ''));
+        $options->setApiKey($this->get_config('apikey', ''));
+        $options->setDebug(true);
 
         $sensor->registerClient('http', new Caliper\Client('default', $options));
 

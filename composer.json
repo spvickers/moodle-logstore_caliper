@@ -3,13 +3,8 @@
     "version" : "0.1.0",
     "type" : "project",
     "license": "GPL v3",
-    "autoload": {
-        "psr-4": {
-            "logstore_caliper\\": "classes/"
-        }
-    },
     "require": {
         "learninglocker/moodle-log-expander": "~1.0",
-        "IMSGlobal/Caliper": "^1.0.1"
+        "imsglobal/caliper": "^1.0.1"
     }
 }

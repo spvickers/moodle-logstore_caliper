@@ -18,7 +18,7 @@
  * External Caliper log store plugin
  *
  * @package    logstore_caliper
- * @copyright  2016 MoodleRooms
+ * @copyright  2016 Moodlerooms Inc. http://www.moodlerooms.com
  * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configtext('logstore_caliper/apikey',
         get_string('apikey', 'logstore_caliper'), '', 'apikey', PARAM_TEXT));
 
-    // Switch background batch mode on
+    // Switch background batch mode on.
     $settings->add(new admin_setting_configcheckbox('logstore_caliper/backgroundmode',
         get_string('backgroundmode', 'logstore_caliper'),
         get_string('backgroundmode_desc', 'logstore_caliper'), 0));

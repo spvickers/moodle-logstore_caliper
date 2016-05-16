@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Process events in queue.
+ * This file contains ...
  *
  * @package    logstore_caliper
  * @copyright  2016 Moodlerooms Inc. http://www.moodlerooms.com
@@ -23,39 +23,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace logstore_caliper\task;
+namespace logstore_caliper\local\RecipeEmitter\Events;
 
-use tool_log\log\manager;
-use logstore_caliper\log\store;
+use \IMSGlobal\Caliper\events;
+use \IMSGlobal\Caliper\actions;
 
-defined('MOODLE_INTERNAL') || die();
+class UserLoggedin extends events\SessionEvent {
 
-class emit_task extends \core\task\scheduled_task {
-
-    /**
-     * Get a descriptive name for this task (shown to admins).
-     *
-     * @return string
-     */
-    public function get_name() {
-        return get_string('taskemit', 'logstore_caliper');
+    public function __construct($translatorevent) {
+        parent::__construct();
+        $this->setAction(new actions\Action(actions\Action::LOGGED_IN));
     }
 
-    /**
-     * Do the job.
-     * Throw exceptions on errors (the job will be retried).
-     */
-    public function execute() {
-        global $DB;
-
-        $manager = get_log_manager();
-        $store = new store($manager);
-
-        $events = $DB->get_records('logstore_caliper_log');
-        $store->process_events($events);
-
-        $DB->delete_records_list('logstore_caliper_log', 'id', array_keys($events));
-
-        mtrace("Sent learning records to Event Store.");
-    }
 }
