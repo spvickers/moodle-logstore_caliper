@@ -51,12 +51,14 @@ class Controller extends \stdClass {
      * @return [String => Mixed]
      */
     public function create_event(array $translatorevent) {
+    	global $CFG;
+
         $route = isset($translatorevent['recipe']) ? $translatorevent['recipe'] : '';
         if (isset(static::$routes[$route])) {
             $event = '\logstore_caliper\local\RecipeEmitter\Events\\'.static::$routes[$route];
             $caliperevent = new $event($translatorevent);
             $t = new \DateTime($translatorevent['time']);
-            $edapp = new agent\SoftwareApplication('http://www.moodle.org/');
+            $edapp = new agent\SoftwareApplication($CFG->wwwroot);
             $edapp->setName($translatorevent['app_name'])->setDescription($translatorevent['app_description']);
             $person = new agent\Person($translatorevent['user_id']);
             $person->setName($translatorevent['user_name']);
