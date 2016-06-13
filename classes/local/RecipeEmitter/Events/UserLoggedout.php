@@ -27,12 +27,18 @@ namespace logstore_caliper\local\RecipeEmitter\Events;
 
 use \IMSGlobal\Caliper\events;
 use \IMSGlobal\Caliper\actions;
+use \IMSGlobal\Caliper\entities\agent;
 
 class UserLoggedout extends events\SessionEvent {
 
     public function __construct($translatorevent) {
+        global $CFG;
+        
         parent::__construct();
         $this->setAction(new actions\Action(actions\Action::LOGGED_OUT));
+        $edapp = new agent\SoftwareApplication($CFG->wwwroot);
+        $edapp->setName($translatorevent['app_name'])->setDescription($translatorevent['app_description']);
+        $this->setObject($edapp);
     }
 
 }
