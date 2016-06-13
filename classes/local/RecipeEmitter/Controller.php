@@ -51,7 +51,7 @@ class Controller extends \stdClass {
      * @return [String => Mixed]
      */
     public function create_event(array $translatorevent) {
-    	global $CFG;
+        global $CFG;
 
         $route = isset($translatorevent['recipe']) ? $translatorevent['recipe'] : '';
         if (isset(static::$routes[$route])) {
@@ -65,9 +65,7 @@ class Controller extends \stdClass {
             $session = new session\Session($translatorevent['session_id']);
             $session->setActor($person);
             $caliperevent->setEdApp($edapp)->setActor($person)->setFederatedSession($session)->setEventTime($t);
-            return $this->repo->create_event($caliperevent);
-        } else {
-            return null;
+            $this->repo->create_event($caliperevent);
         }
     }
 }

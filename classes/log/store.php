@@ -69,13 +69,22 @@ class store extends \stdClass implements \tool_log\log\writer {
      *
      */
     protected function insert_event_entries($evententries) {
-        global $DB;
-
-        // If in background mode, just save them in the database.
-        if (get_config('logstore_caliper', 'backgroundmode')) {
-            $DB->insert_records('logstore_caliper_log', $evententries);
-        } else {
+        global $DB, $COURSE;
+        // Check for missing course ID.
+        if ($evententries[0]['courseid'] == 0) {
+            $evententries[0]['courseid'] = $COURSE->id;
+        }
+        // If in immediate mode send the events, otherwise save them in the database.
+        if (get_config('logstore_caliper', 'immediatemode')) {
+            // Send any pending records.
+            $events = $DB->get_records('logstore_caliper_log');
+            if (count($events) > 0) {
+                $this->process_events($events);
+                $DB->delete_records_list('logstore_caliper_log', 'id', array_keys($events));
+            }
             $this->process_events($evententries);
+        } else {
+            $DB->insert_records('logstore_caliper_log', $evententries);
         }
 
     }
@@ -85,7 +94,8 @@ class store extends \stdClass implements \tool_log\log\writer {
         // Initializes required services.
         $moodlecontroller = new LogExpander\Controller($this->connect_moodle_repository());
         $translatorcontroller = new Translator\Controller();
-        $calipercontroller = new RecipeEmitter\Controller($this->connect_caliper_repository());
+        $caliperrepository = $this->connect_caliper_repository();
+        $calipercontroller = new RecipeEmitter\Controller($caliperrepository);
 
         // Emits events to other APIs.
         foreach ($events as $event) {
@@ -100,8 +110,9 @@ class store extends \stdClass implements \tool_log\log\writer {
                 continue;
             }
 
-            $caliperevent = $calipercontroller->create_event($translatorevent);
+            $calipercontroller->create_event($translatorevent);
         }
+        $caliperrepository->flush_events();
 
     }
 
@@ -135,7 +146,7 @@ class store extends \stdClass implements \tool_log\log\writer {
 
         $sensor->registerClient('http', new Caliper\Client('default', $options));
 
-        return new RecipeEmitter\Repository($sensor);
+        return new RecipeEmitter\Repository($sensor, $this->get_config('batchsize', '1'));
 
     }
 

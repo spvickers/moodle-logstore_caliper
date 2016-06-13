@@ -27,11 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['endpoint'] = 'Event Store URL';
 $string['apikey'] = 'API key';
-$string['backgroundmode'] = 'Send statements by scheduled task?';
-$string['backgroundmode_desc'] = 'This will force Moodle to send the statements to the Event Store in the background,
-        via a cron task. This will make the process less close to real time, but will help to prevent unpredictable
-        Moodle performance linked to the performance of the Event Store.';
+$string['immediatemode'] = 'Send statements immediately to event store?';
+$string['immediatemode_desc'] = 'This will force Moodle to send the statements to the Event Store as they occur rather than,
+        in a background batch mode via a cron task.  This will make the process closer to real time, but could cause unpredictable
+        Moodle performance linked to the response time of the Event Store.';
+$string['batchsize'] = 'Batch size';
+$string['batchsize_desc'] = 'The maximum number of events to send at at time in batch mode.';
 $string['settings'] = 'General Settings';
-$string['pluginname'] = 'Logstore Caliper';
+$string['pluginname'] = 'Caliper log store';
 $string['submit'] = 'Submit';
 $string['taskemit'] = 'Emit records to Event Store';

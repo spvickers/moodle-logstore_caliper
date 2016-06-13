@@ -33,10 +33,17 @@ if ($hassiteconfig) {
 
     // API Key.
     $settings->add(new admin_setting_configtext('logstore_caliper/apikey',
-        get_string('apikey', 'logstore_caliper'), '', 'apikey', PARAM_TEXT));
+        get_string('apikey', 'logstore_caliper'), '', '', PARAM_TEXT));
 
-    // Switch background batch mode on.
-    $settings->add(new admin_setting_configcheckbox('logstore_caliper/backgroundmode',
-        get_string('backgroundmode', 'logstore_caliper'),
-        get_string('backgroundmode_desc', 'logstore_caliper'), 0));
+    // Switch background batch mode off.
+    $settings->add(new admin_setting_configcheckbox('logstore_caliper/immediatemode',
+        get_string('immediatemode', 'logstore_caliper'),
+        get_string('immediatemode_desc', 'logstore_caliper'), 0));
+
+    // Number of events to send at a time in batch mode.
+    $settings->add(new admin_setting_configselect('logstore_caliper/batchsize',
+        get_string('batchsize', 'logstore_caliper'),
+        get_string('batchsize_desc', 'logstore_caliper'), '1',
+        array('1' => '1', '5' => '5', '10' => '10', '25' => '25', '50' => '50', '100' => '100', '200' => '200')));
+
 }

@@ -30,12 +30,16 @@ use \IMSGlobal\Caliper;
 class Repository extends \stdClass {
     protected $sensor;
 
+    private $events = array();
+    private $batchsize;
+
     /**
      * Constructs a new Repository.
      * @param Caliper\Sensor $sensor
      */
-    public function __construct(Caliper\Sensor $sensor) {
+    public function __construct(Caliper\Sensor $sensor, $batchsize) {
         $this->sensor = $sensor;
+        $this->batchsize = intval($batchsize);
     }
 
     /**
@@ -43,6 +47,21 @@ class Repository extends \stdClass {
      * @param Caliper\events\Event $event
      */
     public function create_event($event) {
-        return $this->sensor->send($this->sensor, $event);
+        $this->events[] = $event;
+        if (count($this->events) >= $this->batchsize) {
+            $this->sensor->send($this->sensor, $this->events);
+            $this->events = array();
+        }
     }
+
+    /**
+     * Flush any events to the store.
+     */
+    public function flush_events() {
+        if (count($this->events) > 0) {
+            $this->sensor->send($this->sensor, $this->events);
+            $this->events = array();
+        }
+    }
+
 }
