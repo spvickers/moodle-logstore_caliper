@@ -26,8 +26,6 @@
 namespace logstore_caliper\local\RecipeEmitter\Events;
 
 use \IMSGlobal\Caliper\entities;
-use \IMSGlobal\Caliper\events;
-use \IMSGlobal\Caliper\entities\lis;
 
 class ModuleViewed extends Viewed {
 
@@ -37,11 +35,6 @@ class ModuleViewed extends Viewed {
         $module = new entities\DigitalResource($translatorevent['module_id']);
         $module->setType($type)->setName($translatorevent['module_name'])->setDescription($translatorevent['module_description']);
         $this->setObject($module);
-        $course = new lis\CourseSection($translatorevent['course_id']);
-        $course->setName($translatorevent['course_name']);
-        $course->setDescription($translatorevent['course_description']);
-        $course->setCourseNumber($translatorevent['course_number']);
-        $this->setGroup($course);
     }
 
 }

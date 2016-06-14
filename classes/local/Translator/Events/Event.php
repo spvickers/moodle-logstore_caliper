@@ -50,6 +50,10 @@ class Event extends \stdClass {
             'time' => date('c', $expandedevent['event']['timecreated']),
             'app_name' => $expandedevent['app']->fullname ?: 'A Moodle course',
             'app_description' => $expandedevent['app']->summary ?: 'A Moodle course',
+            'course_id' => "{$expandedevent['user']->url}/course/{$expandedevent['course']->id}",
+            'course_number' => $expandedevent['course']->idnumber,
+            'course_name' => $expandedevent['course']->fullname ?: 'A Moodle course',
+            'course_description' => $expandedevent['course']->summary ?: 'A Moodle course',
             'roles' => $lisroles
         ];
     }

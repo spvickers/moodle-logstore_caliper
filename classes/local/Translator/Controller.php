@@ -54,6 +54,8 @@ class Controller extends \stdClass {
         '\mod_quiz\event\attempt_viewed' => 'ModuleViewed',
         '\core\event\user_loggedin' => 'UserLoggedin',
         '\core\event\user_loggedout' => 'UserLoggedout',
+        '\mod_assign\event\assessable_submitted' => 'AssignmentSubmitted',
+        '\mod_assign\event\submission_graded' => 'AssignmentGraded',
     ];
 
     /**
