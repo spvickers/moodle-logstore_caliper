@@ -25,6 +25,8 @@
 
 namespace logstore_caliper\local\Translator\Events;
 
+use \IMSGlobal\Caliper\entities\lis;
+
 class Event extends \stdClass {
 
     /**
@@ -35,13 +37,20 @@ class Event extends \stdClass {
     public function read(array $expandedevent) {
         $other = unserialize($expandedevent['event']['other']);
         $sessionid = (isset($other['sessionid'])) ? $other['sessionid'] : session_id();
+        $lisroles = array();
+        $roles = explode(',', $expandedevent['event']['roles']);
+        foreach ($roles as $role) {
+            $lisroles[] = new lis\Role($role);
+        }
         return [
             'session_id' => $sessionid,
             'user_id' => "{$expandedevent['user']->url}/user/{$expandedevent['user']->id}",
             'user_name' => "{$expandedevent['user']->firstname} {$expandedevent['user']->lastname}",
+            'member' => "{$expandedevent['user']->url}/course/{$expandedevent['course']->id}/user/{$expandedevent['user']->id}",
             'time' => date('c', $expandedevent['event']['timecreated']),
             'app_name' => $expandedevent['app']->fullname ?: 'A Moodle course',
             'app_description' => $expandedevent['app']->summary ?: 'A Moodle course',
+            'roles' => $lisroles
         ];
     }
 }

@@ -26,11 +26,12 @@
 namespace logstore_caliper\local\RecipeEmitter\Events;
 
 use \IMSGlobal\Caliper\entities\lis;
+use \IMSGlobal\Caliper\events;
 
-class CourseViewed extends Viewed {
+class CourseViewed extends events\NavigationEvent {
 
     public function __construct($translatorevent) {
-        parent::__construct($translatorevent);
+        parent::__construct();
         $course = new lis\CourseSection($translatorevent['course_id']);
         $course->setName($translatorevent['course_name']);
         $course->setDescription($translatorevent['course_description']);

@@ -33,7 +33,7 @@ class UserLoggedout extends events\SessionEvent {
 
     public function __construct($translatorevent) {
         global $CFG;
-        
+
         parent::__construct();
         $this->setAction(new actions\Action(actions\Action::LOGGED_OUT));
         $edapp = new agent\SoftwareApplication($CFG->wwwroot);

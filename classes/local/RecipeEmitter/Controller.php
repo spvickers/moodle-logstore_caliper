@@ -27,6 +27,7 @@ namespace logstore_caliper\local\RecipeEmitter;
 
 use \IMSGlobal\Caliper\entities\agent;
 use \IMSGlobal\Caliper\entities\session;
+use \IMSGlobal\Caliper\entities\lis;
 
 class Controller extends \stdClass {
     protected $repo;
@@ -65,6 +66,16 @@ class Controller extends \stdClass {
             $session = new session\Session($translatorevent['session_id']);
             $session->setActor($person);
             $caliperevent->setEdApp($edapp)->setActor($person)->setFederatedSession($session)->setEventTime($t);
+            if (!empty($translatorevent['roles'])) {
+                $course = new lis\CourseSection($translatorevent['course_id']);
+                $course->setName($translatorevent['course_name']);
+                $course->setDescription($translatorevent['course_description']);
+                $course->setCourseNumber($translatorevent['course_number']);
+                $membership = new lis\Membership($translatorevent['member']);
+                $membership->setMember($person)->setOrganization($course)->setRoles($translatorevent['roles']);
+                $membership->setStatus(new lis\Status(lis\Status::ACTIVE));
+                $caliperevent->setGroup($course)->setMembership($membership);
+            }
             $this->repo->create_event($caliperevent);
         }
     }

@@ -36,6 +36,7 @@ use \logstore_caliper\local\Translator;
 use \logstore_caliper\local\RecipeEmitter;
 
 use \IMSGlobal\Caliper;
+use \IMSGlobal\Caliper\entities\lis;
 
 /**
  * This class processes events and enables them to be sent to a logstore.
@@ -70,10 +71,39 @@ class store extends \stdClass implements \tool_log\log\writer {
      */
     protected function insert_event_entries($evententries) {
         global $DB, $COURSE;
+
+        $caliperevententries = array();
+        $moodlerepository = $this->connect_moodle_repository();
         // Check for missing course ID.
-        if ($evententries[0]['courseid'] == 0) {
-            $evententries[0]['courseid'] = $COURSE->id;
+        $userid = 0;  // Keep ID of current user object to save reloading same user.
+        foreach ($evententries as $id => $evententry) {
+            if ($evententry['courseid'] == 0) {
+                $evententry['courseid'] = $COURSE->id;
+            }
+            if (($userid != $evententry['userid']) && !empty($evententry['userid'])) {
+                $user = $moodlerepository->readUser($evententry['userid']);
+                $userid = $evententry['userid'];
+            }
+            if (!empty($evententry['userid'])) {
+                $evententry['roles'] = $this->get_ims_role($user, $evententry['courseid']);
+            } else {
+                $evententry['roles'] = '';
+            }
+            unset($evententry['component']);
+            unset($evententry['action']);
+            unset($evententry['target']);
+            unset($evententry['crud']);
+            unset($evententry['edulevel']);
+            unset($evententry['contextid']);
+            unset($evententry['contextlevel']);
+            unset($evententry['contextinstanceid']);
+            unset($evententry['anonymous']);
+            unset($evententry['origin']);
+            unset($evententry['ip']);
+            unset($evententry['realuserid']);
+            $caliperevententries[$id] = $evententry;
         }
+
         // If in immediate mode send the events, otherwise save them in the database.
         if (get_config('logstore_caliper', 'immediatemode')) {
             // Send any pending records.
@@ -82,9 +112,9 @@ class store extends \stdClass implements \tool_log\log\writer {
                 $this->process_events($events);
                 $DB->delete_records_list('logstore_caliper_log', 'id', array_keys($events));
             }
-            $this->process_events($evententries);
+            $this->process_events($caliperevententries);
         } else {
-            $DB->insert_records('logstore_caliper_log', $evententries);
+            $DB->insert_records('logstore_caliper_log', $caliperevententries);
         }
 
     }
@@ -98,14 +128,15 @@ class store extends \stdClass implements \tool_log\log\writer {
         $calipercontroller = new RecipeEmitter\Controller($caliperrepository);
 
         // Emits events to other APIs.
-        foreach ($events as $event) {
-            $event = (array) $event;
-            $moodleevent = $moodlecontroller->createEvent($event);
-            if (is_null($moodleevent)) {
+        foreach ($events as $id => $event) {
+            $eventarray = array();
+            $eventarray[$id] = (array) $event;
+            $moodleevent = $moodlecontroller->createEvents($eventarray);
+            if (empty($moodleevent)) {
                 continue;
             }
 
-            $translatorevent = $translatorcontroller->create_event($moodleevent);
+            $translatorevent = $translatorcontroller->create_event($moodleevent[0]);
             if (is_null($translatorevent)) {
                 continue;
             }
@@ -159,4 +190,23 @@ class store extends \stdClass implements \tool_log\log\writer {
         global $CFG;
         return new LogExpander\Repository($DB, $CFG);
     }
+
+    private function get_ims_role($user, $courseid) {
+        $roles = array();
+
+        $coursecontext = \context_course::instance($courseid);
+
+        if (has_capability('moodle/course:manageactivities', $coursecontext, $user)) {
+            array_push($roles, lis\Role::INSTRUCTOR);
+        } else {
+            array_push($roles, lis\Role::LEARNER);
+        }
+
+        if (is_siteadmin($user)) {
+            array_push($roles, lis\Role::ADMINISTRATOR_SYSTEM_ADMINISTRATOR);
+        }
+
+        return join(',', $roles);
+    }
+
 }
