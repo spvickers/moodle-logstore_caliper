@@ -37,7 +37,6 @@ class AssignmentGraded extends events\OutcomeEvent {
         parent::__construct($translatorevent);
 
         $person = new agent\Person($translatorevent['graded_user_id']);
-//        $person->setName($translatorevent['user_name']);
 
         $grader = new agent\Person($translatorevent['user_id']);
 
@@ -55,18 +54,18 @@ class AssignmentGraded extends events\OutcomeEvent {
         $object->setActor($person);
         $object->setAssignable($target);
         $object->setCount(intval($translatorevent['attemptnumber']));
-        
+
         $result = new outcome\Result($translatorevent['result_id']);
         $result->setAssignable($target);
         $result->setActor($person);
         $result->setScoredBy($grader);
         $result->setTotalScore(floatval($translatorevent['grade']));
 
-        $this->setActor($grader);        
+        $this->setActor($grader);
         $this->setObject($object);
         $this->setTarget($target);
         $this->setGenerated($result);
-        
+
     }
 
 }

@@ -38,7 +38,8 @@ class AssignmentSubmitted extends Event {
             'assignment_id' => $expandedevent['module']->url,
             'assignment_name' => $expandedevent['module']->name,
             'assignment_description' => $expandedevent['module']->intro,
-            'attempt_id' => "{$expandedevent['module']->url}/user/{$expandedevent['user']->id}/attempt/{$expandedevent['submission']->attemptnumber}",
+            'attempt_id' => "{$expandedevent['module']->url}/user/{$expandedevent['user']->id}" .
+                "/attempt/{$expandedevent['submission']->attemptnumber}",
             'attemptnumber' => $expandedevent['submission']->attemptnumber,
             'allowsubmissionsfromdate' => date('c', $expandedevent['module']->allowsubmissionsfromdate),
             'duedate' => date('c', $expandedevent['module']->duedate),

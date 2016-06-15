@@ -38,7 +38,8 @@ class AssignmentGraded extends Event {
             'assignment_id' => $expandedevent['module']->url,
             'assignment_name' => $expandedevent['module']->name,
             'assignment_description' => $expandedevent['module']->intro,
-            'attempt_id' => "{$expandedevent['module']->url}/user/{$expandedevent['user']->id}/attempt/{$expandedevent['grade']->attemptnumber}",
+            'attempt_id' => "{$expandedevent['module']->url}/user/{$expandedevent['user']->id}" .
+                "/attempt/{$expandedevent['grade']->attemptnumber}",
             'attemptnumber' => $expandedevent['grade']->attemptnumber,
             'allowsubmissionsfromdate' => date('c', $expandedevent['module']->allowsubmissionsfromdate),
             'duedate' => date('c', $expandedevent['module']->duedate),
@@ -46,7 +47,8 @@ class AssignmentGraded extends Event {
             'grademax' => $expandedevent['module']->grade,
             'graded_user_id' => "{$expandedevent['graded_user']->url}/user/{$expandedevent['graded_user']->id}",
             'graded_user_name' => "{$expandedevent['graded_user']->firstname} {$expandedevent['graded_user']->lastname}",
-            'result_id' => "{$expandedevent['module']->url}/user/{$expandedevent['user']->id}/attempt/{$expandedevent['grade']->attemptnumber}/result",
+            'result_id' => "{$expandedevent['module']->url}/user/{$expandedevent['user']->id}" .
+                "/attempt/{$expandedevent['grade']->attemptnumber}/result",
             'grade' => $expandedevent['grade']->grade
 
         ]);

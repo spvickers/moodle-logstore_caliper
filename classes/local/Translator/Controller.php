@@ -56,10 +56,8 @@ class Controller extends \stdClass {
         '\core\event\user_loggedout' => 'UserLoggedout',
         '\mod_assign\event\assessable_submitted' => 'AssignmentSubmitted',
         '\mod_assign\event\submission_graded' => 'AssignmentGraded',
-//        '\mod_quiz\event\attempt_abandoned' => 'AttemptAbandoned',
         '\mod_quiz\event\attempt_preview_started' => 'AttemptStarted',
         '\mod_quiz\event\attempt_reviewed' => 'ModuleViewed',
-//        '\mod_quiz\event\attempt_viewed' => 'AttemptStarted',
     ];
 
     /**

@@ -51,7 +51,6 @@ class AttemptCompleted extends events\AssessmentEvent {
 
         $object = new assignable\Attempt($translatorevent['attempt_id']);
         $person = new agent\Person($translatorevent['user_id']);
-//        $person->setName($translatorevent['user_name']);
         $object->setActor($person);
         $object->setAssignable($target);
         $object->setCount(intval($translatorevent['attemptnumber']));
