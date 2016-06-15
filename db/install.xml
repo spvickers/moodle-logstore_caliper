@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/log/store/caliper/db" VERSION="20160614" COMMENT="XMLDB file for Moodle admin/tool/log/store/caliper"
+<XMLDB PATH="admin/tool/log/store/caliper/db" VERSION="20160615" COMMENT="XMLDB file for Moodle admin/tool/log/store/caliper"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -14,7 +14,7 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="relateduserid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="other" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="roles" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="roles" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

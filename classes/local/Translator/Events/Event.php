@@ -38,9 +38,12 @@ class Event extends \stdClass {
         $other = unserialize($expandedevent['event']['other']);
         $sessionid = (isset($other['sessionid'])) ? $other['sessionid'] : session_id();
         $lisroles = array();
-        $roles = explode(',', $expandedevent['event']['roles']);
-        foreach ($roles as $role) {
-            $lisroles[] = new lis\Role($role);
+        $roles = $expandedevent['event']['roles'];
+        if (!is_null($roles)) {
+            $roles = explode(',', $roles);
+            foreach ($roles as $role) {
+                $lisroles[] = new lis\Role($role);
+            }
         }
         return [
             'session_id' => $sessionid,

@@ -110,7 +110,7 @@ function xmldb_logstore_caliper_upgrade($oldversion) {
         }
 
         // Define field roles to be added to logstore_standard_log.
-        $field = new xmldb_field('roles', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'other');
+        $field = new xmldb_field('roles', XMLDB_TYPE_TEXT, null, null, null, null, null, 'other');
         // Conditionally launch add field roles.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
