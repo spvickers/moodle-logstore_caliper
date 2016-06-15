@@ -38,6 +38,8 @@ class Controller extends \stdClass {
         'user_loggedout' => 'UserLoggedout',
         'assignment_submitted' => 'AssignmentSubmitted',
         'assignment_graded' => 'AssignmentGraded',
+        'attempt_started' => 'AttemptStarted',
+        'attempt_completed' => 'AttemptCompleted',
     ];
 
     /**
