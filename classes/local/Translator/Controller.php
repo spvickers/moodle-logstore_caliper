@@ -49,14 +49,14 @@ class Controller extends \stdClass {
         '\mod_glossary\event\course_module_viewed' => 'ModuleViewed',
         '\mod_imscp\event\course_module_viewed' => 'ModuleViewed',
         '\mod_survey\event\course_module_viewed' => 'ModuleViewed',
-        '\mod_url\event\course_module_viewed' => 'ModuleViewed',
         '\mod_facetoface\event\course_module_viewed' => 'ModuleViewed',
         '\mod_quiz\event\attempt_viewed' => 'ModuleViewed',
         '\core\event\user_loggedin' => 'UserLoggedin',
         '\core\event\user_loggedout' => 'UserLoggedout',
         '\mod_assign\event\assessable_submitted' => 'AssignmentSubmitted',
         '\mod_assign\event\submission_graded' => 'AssignmentGraded',
-        '\mod_quiz\event\attempt_preview_started' => 'AttemptStarted',
+        '\mod_quiz\event\attempt_started' => 'AttemptStarted',
+        '\mod_quiz\event\attempt_submitted' => 'AttemptCompleted',
         '\mod_quiz\event\attempt_reviewed' => 'ModuleViewed',
     ];
 
